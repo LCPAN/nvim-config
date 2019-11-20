@@ -1,3 +1,4 @@
+let g:python3_host_prog = '/usr/bin/python3'
 " Specify a directory for plugins
 " - For Neovim: ~/.local/share/nvim/plugged
 " - Avoid using standard Vim directory names like 'plugin'
@@ -6,21 +7,26 @@ call plug#begin('~/.local/share/nvim/plugged')
 " Make sure you use single quotes
  Plug 'gregsexton/gitv', {'on': ['Gitv']}  "git
  Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+if has('nvim')
+  Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/defx.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
  Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
     \ 'do': 'bash install.sh',
     \ }
-" Plug '~/.fzf'
+ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
  Plug 'junegunn/fzf.vim'
- Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
  Plug 'vim-airline/vim-airline'
  Plug 'vim-airline/vim-airline-themes'
- Plug 'majutsushi/tagbar'              "标签
-" Plug 'w0rp/ale'                       "代码检测, 代码对齐，格式化
 " Plug 'terryma/vim-multiple-cursors'   "多光标
  Plug 'justinmk/vim-sneak'
  Plug 'jiangmiao/auto-pairs'
+ Plug 'tpope/vim-surround'
 
 " Multiple Plug commands can be written in a single line using | separators
  Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
@@ -33,25 +39,23 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 " LanguageClient
  set hidden
- "let g:LanguageClient_autoStart = 0
+ let g:LanguageClient_autoStart = 1
  "let g:LanguageClient_devel = 1
- "let g:LanguageClient_loggingLevel = 'DEBUG'
+ let g:LanguageClient_loggingLevel = 'DEBUG'
  " no need for diagnostics, we're going to use neomake for that
  let g:LanguageClient_diagnosticsEnable  = 0
- let g:LanguageClient_signColumnAlwaysOn = 0
+ let g:LanguageClient_signColumnAlwaysOn = 1
  let g:LanguageClient_selectionUI = 'fzf'
  let g:LanguageClient_serverCommands = {
-  \ 'cpp': ['clangd-6.0'],
-  \ 'c': ['clangd-6.0'],
+  \ 'c': ['/home/lcp/self/softwave/ccls/bin/ccls', '--log-file=/tmp/cc.log'],
+  \ 'cpp': ['/home/lcp/self/softwave/ccls/bin/ccls', '--log-file=/tmp/cc.log'],
   \ }
-
- "nnoremap <silent> <leader>r :call LanguageClient_textDocument_rename()<CR>
- "nnoremap <silent> <leader>f :call LanguageClient_textDocument_formatting()<CR>
 
  " Put this outside of the plugin section
  " <leader>lf to fuzzy find the symbols in the current document
- "autocmd FileType c nnoremap <buffer>
- "  \ <leader>lf :call LanguageClient_textDocument_documentSymbol()<cr>
+ nnoremap <silent> <leader>h :call LanguageClient#textDocument_hover()<CR>
+ nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+ nnoremap <silent> <leader>f :call LanguageClient_textDocument_formatting()<CR>
 
 " fzf
  " Default fzf layout
@@ -72,55 +76,32 @@ call plug#begin('~/.local/share/nvim/plugged')
  "\ 'marker':  ['fg', 'Keyword'],
  "\ 'spinner': ['fg', 'Label'],
  "\ 'header':  ['fg', 'Comment'] }
- nnoremap <leader>s :Rg<space>
  " word under cursor
- nnoremap <leader>R :exec "Rg ".expand("<cword>")<cr>
+ nnoremap <leader>R :exec "Rg ".expand("<cword>")<CR>
  " search for visual selection
- vnoremap // "hy:exec "Rg ".escape('<C-R>h', "/\.*$^~[()")<cr>
+ "vnoremap // "hy:exec "Rg ".escape('<C-R>h', "/\.*$^~[()")<cr>
  
  autocmd! VimEnter * command! -bang -nargs=* Rg
    \ call fzf#vim#grep(
    \   'rg --column --smart-case --line-number --color=always --no-heading --fixed-strings --follow --glob "!.git/*" '.shellescape(<q-args>), 1,
    \   <bang>0 ? fzf#vim#with_preview('up:60%')
-   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+   \           : fzf#vim#with_preview('left:50%:hidden', '?'),
    \   <bang>0)
  
- nnoremap <leader>, :Files<cr>
+ nnoremap <leader>, :Files<CR>
+ nnoremap <leader>bu :Buffers<CR>
  " vertical split
- nnoremap <leader>. :call fzf#run({'sink': 'e', 'right': '40%'})<cr>
- nnoremap <leader>d :BTags<cr>
- " word under cursor
- nnoremap <leader>D :BTags <C-R><C-W><cr>
- nnoremap <leader>S :Tags<cr>
+ nnoremap <leader>. :call fzf#run({'sink': 'e', 'left': '40%'})<CR>
 
 " deoplete
- "let g:deoplete#enable_at_startup = 1
 " Enable deoplete when InsertEnter.
-  let g:deoplete#enable_at_startup = 0
+  let g:deoplete#enable_at_startup = 1
   autocmd InsertEnter * call deoplete#enable()
-  if has("patch-7.4.314")
-    set shortmess+=c
-  endif
   set completeopt+=noinsert
-
-" tagbar
- "设置tagbar的窗口宽度  
- let g:tagbar_width=30  
- "设置tagbar的窗口显示的位置,为左边  
- "let g:tagbar_left=1  
- let g:tagbar_right=1  
- nmap <F10> :TagbarToggle<CR> 
 
 "NerdTree
  map <F3> :NERDTreeMirror<CR>
  map <F3> :NERDTreeToggle<CR>
-
-" ale
- "let g:ale_fixers = {
- "\   'c': ['clang'],
- "\}
- " Enable completion where available.
- "let g:ale_completion_enabled = 1
 
 "ultisnips
  let g:UltiSnipsExpandTrigger="<tab>"
@@ -136,22 +117,9 @@ call plug#begin('~/.local/share/nvim/plugged')
 " let g:multi_cursor_skip_key='<C-x>'
 " let g:multi_cursor_quit_key='<Esc>'
 
-"cscope
- "set autochdir
- "cscope add /home/lcp/program/ti/lib
- "if has("cscope.out")
- "   cscope add .
- "endif
- "nnoremap <silent> <F12> :!cscope -Rbqk <CR>:!cscope add cscope.out<CR>
- "nnoremap <leader>fs :cs find s <C-R>=expand("<cword>")<CR><CR>
- "nnoremap <Leader>fg :cs find g <C-R>=expand("<cword>")<CR><CR>
- "nnoremap <Leader>fc :cs find c <C-R>=expand("<cword>")<CR><CR>
- "nnoremap <Leader>ft :cs find t <C-R>=expand("<cword>")<CR><CR>
- "nnoremap <Leader>fe :cs find e <C-R>=expand("<cword>")<CR><CR>
- "nnoremap <Leader>ff :cs find f <C-R>=expand("<cfile>")<CR><CR>
- "nnoremap <Leader>fi :cs find i <C-R>=expand("<cfile>")<CR><CR>
- "nnoremap <Leader>fd :cs find d <C-R>=expand("<cword>")<CR><CR>
  nmap <Leader>ba <C-T>
+
+ set t_Co=256
 
 "vim-airline
  let g:airline_theme='papercolor'
@@ -159,6 +127,7 @@ call plug#begin('~/.local/share/nvim/plugged')
  set guifont=DejaVu\ Sans\ Mono\ for\ Powerline
  "let g:airline_detect_whitespace = 0 "关闭空白符检测
  let g:airline#extensions#tabline#enabled = 1 "顶部tab栏显示
+ "let g:airline_statusline_ontop = 1
  "let g:airline_theme = 'bubblegum' "设定主题
  "let g:airline_theme = 'badwolf' "设定主题
  "let g:airline_theme = 'luna' "设定主题
@@ -169,17 +138,17 @@ call plug#begin('~/.local/share/nvim/plugged')
  "let g:airline_theme = 'papercolor'
  "let g:airline_theme = 'understated'
  "let g:airline_theme = 'wombat'
- set t_Co=256
  "let g:airline_section_b = '%{strftime("%c")}'
  "let g:airline_section_y = 'BN: %{bufnr("%")}'
+ let g:airline_detect_paste=1
  "tabline中当前buffer两端的分隔字符
  let g:airline#extensions#tabline#left_sep = '◀'
  "tabline中未激活buffer两端的分隔字符
  let g:airline#extensions#tabline#left_alt_sep = '|'
- "tabline中buffer显示编号
- let g:airline_detect_paste=1
+
  let g:airline#extensions#tavline#enabled = 1
  let g:airline#extensions#tabline#buffer_nr_show = 1
+ "tabline中buffer显示编号
  let g:airline#extensions#tabline#buffer_idx_mode = 1
  nmap <leader>1 <Plug>AirlineSelectTab1
  nmap <leader>2 <Plug>AirlineSelectTab2
@@ -190,6 +159,8 @@ call plug#begin('~/.local/share/nvim/plugged')
  nmap <leader>7 <Plug>AirlineSelectTab7
  nmap <leader>8 <Plug>AirlineSelectTab8
  nmap <leader>9 <Plug>AirlineSelectTab9
+ nmap <leader>bp <Plug>AirlineSelectPrevTab
+ nmap <leader>bn <Plug>AirlineSelectNextTab
 
 "auto-pairs
  let g:AutoPairsFlyMode = 0
@@ -227,9 +198,9 @@ call plug#begin('~/.local/share/nvim/plugged')
 
  syntax enable
 "设置（软）制表符宽度为4
- set tabstop=4 
+ set tabstop=2
  set et
- set softtabstop=4
+ set softtabstop=2
 "设置缩进的空格数为4
  set shiftwidth=4
  set smartindent   " 开启新行时使用智能自动缩进"
