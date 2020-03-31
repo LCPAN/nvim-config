@@ -23,10 +23,11 @@ endif
  Plug 'junegunn/fzf.vim'
  Plug 'vim-airline/vim-airline'
  Plug 'vim-airline/vim-airline-themes'
-" Plug 'terryma/vim-multiple-cursors'   "多光标
+ Plug 'terryma/vim-multiple-cursors'   "多光标
  Plug 'justinmk/vim-sneak'
  Plug 'jiangmiao/auto-pairs'
  Plug 'tpope/vim-surround'
+ Plug 'liuchengxu/vista.vim'
 
 " Multiple Plug commands can be written in a single line using | separators
  Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
@@ -45,17 +46,18 @@ endif
  " no need for diagnostics, we're going to use neomake for that
  let g:LanguageClient_diagnosticsEnable  = 0
  let g:LanguageClient_signColumnAlwaysOn = 1
+ let g:LanguageClient_useFloatingHover= 1
  let g:LanguageClient_selectionUI = 'fzf'
  let g:LanguageClient_serverCommands = {
-  \ 'c': ['/home/lcp/self/softwave/ccls/bin/ccls', '--log-file=/tmp/cc.log'],
-  \ 'cpp': ['/home/lcp/self/softwave/ccls/bin/ccls', '--log-file=/tmp/cc.log'],
+  \ 'c': ['/home/lcp/self/softwave/ccls/bin/ccls', '--log-file=/tmp/cc.log', '--init={"cache": {"directory": "/tmp/ccls-cache"}}'],
+  \ 'cpp': ['/home/lcp/self/softwave/ccls/bin/ccls', '--log-file=/tmp/cc.log', '--init={"cache": {"directory": "/tmp/ccls-cache"}}'],
   \ }
 
  " Put this outside of the plugin section
  " <leader>lf to fuzzy find the symbols in the current document
- nnoremap <silent> <leader>h :call LanguageClient#textDocument_hover()<CR>
- nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
- nnoremap <silent> <leader>f :call LanguageClient_textDocument_formatting()<CR>
+ nnoremap <silent> <leader>hv :call LanguageClient#textDocument_hover()<CR>
+ nnoremap <silent> <leader>gd :call LanguageClient#textDocument_definition()<CR>
+ nnoremap <silent> <leader>fm :call LanguageClient_textDocument_formatting()<CR>
 
 " fzf
  " Default fzf layout
@@ -90,6 +92,7 @@ endif
  
  nnoremap <leader>, :Files<CR>
  nnoremap <leader>bu :Buffers<CR>
+ nnoremap <leader>li :Lines<CR>
  " vertical split
  nnoremap <leader>. :call fzf#run({'sink': 'e', 'left': '40%'})<CR>
 
@@ -97,10 +100,10 @@ endif
 " Enable deoplete when InsertEnter.
   let g:deoplete#enable_at_startup = 1
   autocmd InsertEnter * call deoplete#enable()
-  set completeopt+=noinsert
+
+set completeopt+=noinsert
 
 "NerdTree
- map <F3> :NERDTreeMirror<CR>
  map <F3> :NERDTreeToggle<CR>
 
 "ultisnips
@@ -117,7 +120,7 @@ endif
 " let g:multi_cursor_skip_key='<C-x>'
 " let g:multi_cursor_quit_key='<Esc>'
 
- nmap <Leader>ba <C-T>
+ nmap <Leader>ba <C-O>
 
  set t_Co=256
 
@@ -165,6 +168,18 @@ endif
 "auto-pairs
  let g:AutoPairsFlyMode = 0
 
+"auto-pairs
+ function! NearestMethodOrFunction() abort
+   return get(b:, 'vista_nearest_method_or_function', '')
+ endfunction
+ set statusline+=%{NearestMethodOrFunction()}
+ autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
+ let g:vista_echo_cursor_strategy = 'floating_win'
+ let g:vista_default_executive = 'lcn'
+
+ nnoremap <F5> :Vista lcn<CR>
+ nnoremap <F6> :Vista finder fzf<CR>
+
  nnoremap <F9> :so ~/.config/nvim/init.vim<CR>
 
  noremap <silent> <expr> j (v:count == 0 ? 'gj':'j')
@@ -172,8 +187,6 @@ endif
 
  inoremap <C-C> <ESC>
 
-" 依次遍历子窗口
- nnoremap nw <C-W><C-W>
 " 跳转至右方的窗口
  nnoremap <Leader>lw <C-W>l
 " 跳转至方的窗口
@@ -188,6 +201,8 @@ endif
  nmap <Leader>wt :w<CR>
  nmap <Leader>qt :q<CR>
  nmap <Leader>wq :wq<CR>
+
+ nmap <Leader>sp "+p<CR>
 
 "基于缩进或语法进行代码折叠
 "set foldmethod=indent
