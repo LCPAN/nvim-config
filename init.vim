@@ -5,59 +5,86 @@ let g:python3_host_prog = '/usr/bin/python3'
 call plug#begin('~/.local/share/nvim/plugged')
 
 " Make sure you use single quotes
- Plug 'gregsexton/gitv', {'on': ['Gitv']}  "git
+ Plug 'tpope/vim-fugitive'  "git
  Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-if has('nvim')
-  Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/defx.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
-endif
+ Plug 'ryanoasis/vim-devicons'  "Adds file type icons to Vim plugins
+
  Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
     \ 'do': 'bash install.sh',
     \ }
- Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+ if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+ else
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+ endif
+ Plug 'Shougo/echodoc.vim'
+
  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
  Plug 'junegunn/fzf.vim'
  Plug 'vim-airline/vim-airline'
  Plug 'vim-airline/vim-airline-themes'
- Plug 'terryma/vim-multiple-cursors'   "多光标
- Plug 'justinmk/vim-sneak'
+ Plug 'mg979/vim-visual-multi', {'branch': 'master'}  "多光标
  Plug 'jiangmiao/auto-pairs'
  Plug 'tpope/vim-surround'
- Plug 'liuchengxu/vista.vim'
+ Plug 'liuchengxu/vista.vim' "Viewer & Finder for LSP symbols and tags
+ "Plug 'preservim/nerdcommenter' "Comment functions
+ Plug 'Chiel92/vim-autoformat'
+ Plug 'voldikss/vim-floaterm'
 
 " Multiple Plug commands can be written in a single line using | separators
  Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 
+ Plug 'rust-lang/rust.vim'
+
+ Plug 'skywind3000/asyncrun.vim'
+ Plug 'vimwiki/vimwiki'
+
 " Initialize plugin system
  call plug#end()
 
-  " 定义快捷键的前缀，即<Leader>
+"基于缩进或语法进行代码折叠
+"set foldmethod=indent
+ set foldmethod=syntax
+
+set nocompatible
+filetype plugin on
+" 启动 vim 时关闭折叠代码
+ set nofoldenable
+
+ syntax enable
+"设置（软）制表符宽度为4
+ set tabstop=2
+ set et
+ set softtabstop=2
+"设置缩进的空格数为4
+ set shiftwidth=2
+ set smartindent   " 开启新行时使用智能自动缩进"
+"设置使用 C/C++ 语言的自动缩进方式
+"set cindent
+"开启行号显示
+ set number
+"使用相对行号
+ set relativenumber
+"光标离窗口上下边界5行时窗口自动滚动
+ set scrolloff=5
+ set mouse=
+
+" 定义快捷键的前缀，即<Leader>
  let mapleader=";"
 
-" LanguageClient
- set hidden
- let g:LanguageClient_autoStart = 1
- "let g:LanguageClient_devel = 1
- let g:LanguageClient_loggingLevel = 'DEBUG'
- " no need for diagnostics, we're going to use neomake for that
- let g:LanguageClient_diagnosticsEnable  = 0
- let g:LanguageClient_signColumnAlwaysOn = 1
- let g:LanguageClient_useFloatingHover= 1
- let g:LanguageClient_selectionUI = 'fzf'
- let g:LanguageClient_serverCommands = {
-  \ 'c': ['/home/lcp/self/softwave/ccls/bin/ccls', '--log-file=/tmp/cc.log', '--init={"cache": {"directory": "/tmp/ccls-cache"}}'],
-  \ 'cpp': ['/home/lcp/self/softwave/ccls/bin/ccls', '--log-file=/tmp/cc.log', '--init={"cache": {"directory": "/tmp/ccls-cache"}}'],
-  \ }
+" vim-autoformat
+ noremap <F2> :Autoformat<CR>
+ let g:formatter_yapf_style = 'pep8'
 
- " Put this outside of the plugin section
- " <leader>lf to fuzzy find the symbols in the current document
- nnoremap <silent> <leader>hv :call LanguageClient#textDocument_hover()<CR>
- nnoremap <silent> <leader>gd :call LanguageClient#textDocument_definition()<CR>
- nnoremap <silent> <leader>fm :call LanguageClient_textDocument_formatting()<CR>
+" vim-floaterm
+ let g:floaterm_keymap_toggle = '<F4>'
+ tnoremap <silent> <leader>tc   <C-\><C-n>:FloatermNew<CR>
+ tnoremap <silent> <leader>tp   <C-\><C-n>:FloatermPrev<CR>
+ tnoremap <silent> <leader>tn   <C-\><C-n>:FloatermNext<CR>
+ tnoremap <silent> <leader>tt   <C-\><C-n>:FloatermToggle<CR>
 
 " fzf
  " Default fzf layout
@@ -80,28 +107,81 @@ endif
  "\ 'header':  ['fg', 'Comment'] }
  " word under cursor
  nnoremap <leader>R :exec "Rg ".expand("<cword>")<CR>
- " search for visual selection
- "vnoremap // "hy:exec "Rg ".escape('<C-R>h', "/\.*$^~[()")<cr>
- 
- autocmd! VimEnter * command! -bang -nargs=* Rg
-   \ call fzf#vim#grep(
-   \   'rg --column --smart-case --line-number --color=always --no-heading --fixed-strings --follow --glob "!.git/*" '.shellescape(<q-args>), 1,
-   \   <bang>0 ? fzf#vim#with_preview('up:60%')
-   \           : fzf#vim#with_preview('left:50%:hidden', '?'),
-   \   <bang>0)
- 
  nnoremap <leader>, :Files<CR>
  nnoremap <leader>bu :Buffers<CR>
  nnoremap <leader>li :Lines<CR>
- " vertical split
- nnoremap <leader>. :call fzf#run({'sink': 'e', 'left': '40%'})<CR>
 
 " deoplete
 " Enable deoplete when InsertEnter.
   let g:deoplete#enable_at_startup = 1
   autocmd InsertEnter * call deoplete#enable()
+  call deoplete#custom#source('LanguageClient',
+              \ 'min_pattern_length',
+              \ 2)
+  set completeopt+=menu,preview,noinsert
 
-set completeopt+=noinsert
+set cmdheight=2
+let g:echodoc#enable_at_startup = 1
+let g:echodoc#type = 'signature'
+
+" LanguageClient
+ set hidden
+ let g:LanguageClient_autoStart = 1
+ " let g:LanguageClient_devel = 1
+ " let g:LanguageClient_loggingLevel = 'WARN'
+ let g:LanguageClient_loggingLevel = 'DEBUG'
+ " no need for diagnostics, we're going to use neomake for that
+ let g:LanguageClient_diagnosticsEnable  = 1
+ let g:LanguageClient_signColumnAlwaysOn = 1
+ let g:LanguageClient_useFloatingHover= 1
+ let g:LanguageClient_settingsPath = './settings.json'
+ let g:LanguageClient_selectionUI = 'fzf'
+ let g:LanguageClient_serverCommands = {
+  \ 'c': ['/home/lcp/self/softwave/ccls/bin/ccls', '--log-file=/tmp/cc.log'],
+  \ 'cpp': ['/home/lcp/self/softwave/ccls/bin/ccls', '--log-file=/tmp/cc.log'],
+  \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
+  \ }
+
+ " Put this outside of the plugin section
+ " <leader>lf to fuzzy find the symbols in the current document
+ function SetLSPShortcuts()
+  nnoremap <leader>ld :call LanguageClient#textDocument_definition()<CR>
+  nnoremap <leader>lr :call LanguageClient#textDocument_rename()<CR>
+  nnoremap <leader>lf :call LanguageClient#textDocument_formatting()<CR>
+  nnoremap <leader>lt :call LanguageClient#textDocument_typeDefinition()<CR>
+  nnoremap <leader>lx :call LanguageClient#textDocument_references()<CR>
+  nnoremap <leader>la :call LanguageClient_workspace_applyEdit()<CR>
+  nnoremap <leader>lc :call LanguageClient#textDocument_completion()<CR>
+  nnoremap <leader>lh :call LanguageClient#textDocument_hover()<CR>
+  nnoremap <leader>ls :call LanguageClient_textDocument_documentSymbol()<CR>
+  nnoremap <leader>lm :call LanguageClient_contextMenu()<CR>
+  " bases
+  nnoremap <leader>xb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<CR>
+  " bases of up to 3 levels
+  nnoremap <leader>xB :call LanguageClient#findLocations({'method':'$ccls/inheritance','levels':3})<CR>
+  " derived
+  nnoremap <leader>xd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<CR>
+  " derived of up to 3 levels
+  nnoremap <leader>xD :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true,'levels':3})<CR>
+
+  " caller
+  nnoremap <leader>xc :call LanguageClient#findLocations({'method':'$ccls/call'})<CR>
+  " callee
+  nnoremap <leader>xC :call LanguageClient#findLocations({'method':'$ccls/call','callee':v:true})<CR>
+
+  " $ccls/member
+  " nested classes / types in a namespace
+  nnoremap <leader>xs :call LanguageClient#findLocations({'method':'$ccls/member','kind':2})<CR>
+  " member functions / functions in a namespace
+  nnoremap <leader>xf :call LanguageClient#findLocations({'method':'$ccls/member','kind':3})<CR>
+  " member variables / variables in a namespace
+  nnoremap <leader>xm :call LanguageClient#findLocations({'method':'$ccls/member'})<CR>
+ endfunction()
+
+ augroup LSP
+  autocmd!
+  autocmd FileType rust,cpp,c call SetLSPShortcuts()
+ augroup END
 
 "NerdTree
  map <F3> :NERDTreeToggle<CR>
@@ -112,7 +192,7 @@ set completeopt+=noinsert
  let g:UltiSnipsJumpForwardTrigger = '<Tab>'       " <Tab>跳转的到下一个代码块可编辑区
  let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'    " <S-Tab>跳转到上一个代码块可编辑区
 
-" vim-multiple-cursors
+" vim-visual-multi
 "let g:multi_cursor_use_default_mapping=0
 " Default mapping
 " let g:multi_cursor_next_key='<C-n>'
@@ -126,33 +206,25 @@ set completeopt+=noinsert
 
 "vim-airline
  let g:airline_theme='papercolor'
-  set laststatus=2
+ set laststatus=2
  set guifont=DejaVu\ Sans\ Mono\ for\ Powerline
  "let g:airline_detect_whitespace = 0 "关闭空白符检测
  let g:airline#extensions#tabline#enabled = 1 "顶部tab栏显示
  "let g:airline_statusline_ontop = 1
- "let g:airline_theme = 'bubblegum' "设定主题
- "let g:airline_theme = 'badwolf' "设定主题
- "let g:airline_theme = 'luna' "设定主题
- let g:airline_theme = 'molokai'
- "let g:airline_theme = 'sol'
- "let g:airline_theme = 'murmur'
- "let g:airline_theme = 'hybridline'
- "let g:airline_theme = 'papercolor'
- "let g:airline_theme = 'understated'
- "let g:airline_theme = 'wombat'
  "let g:airline_section_b = '%{strftime("%c")}'
  "let g:airline_section_y = 'BN: %{bufnr("%")}'
  let g:airline_detect_paste=1
+
+ " enable tabline
+ let g:airline#extensions#tabline#enabled = 1
  "tabline中当前buffer两端的分隔字符
  let g:airline#extensions#tabline#left_sep = '◀'
  "tabline中未激活buffer两端的分隔字符
  let g:airline#extensions#tabline#left_alt_sep = '|'
-
- let g:airline#extensions#tavline#enabled = 1
  let g:airline#extensions#tabline#buffer_nr_show = 1
  "tabline中buffer显示编号
  let g:airline#extensions#tabline#buffer_idx_mode = 1
+
  nmap <leader>1 <Plug>AirlineSelectTab1
  nmap <leader>2 <Plug>AirlineSelectTab2
  nmap <leader>3 <Plug>AirlineSelectTab3
@@ -166,9 +238,6 @@ set completeopt+=noinsert
  nmap <leader>bn <Plug>AirlineSelectNextTab
 
 "auto-pairs
- let g:AutoPairsFlyMode = 0
-
-"auto-pairs
  function! NearestMethodOrFunction() abort
    return get(b:, 'vista_nearest_method_or_function', '')
  endfunction
@@ -176,6 +245,9 @@ set completeopt+=noinsert
  autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
  let g:vista_echo_cursor_strategy = 'floating_win'
  let g:vista_default_executive = 'lcn'
+
+"auto-pairs
+ let g:AutoPairsFlyMode = 0
 
  nnoremap <F5> :Vista lcn<CR>
  nnoremap <F6> :Vista finder fzf<CR>
@@ -203,28 +275,3 @@ set completeopt+=noinsert
  nmap <Leader>wq :wq<CR>
 
  nmap <Leader>sp "+p<CR>
-
-"基于缩进或语法进行代码折叠
-"set foldmethod=indent
- set foldmethod=syntax
-
-" 启动 vim 时关闭折叠代码
- set nofoldenable
-
- syntax enable
-"设置（软）制表符宽度为4
- set tabstop=2
- set et
- set softtabstop=2
-"设置缩进的空格数为4
- set shiftwidth=4
- set smartindent   " 开启新行时使用智能自动缩进"
-"设置使用 C/C++ 语言的自动缩进方式
-"set cindent
-"开启行号显示
- set number
-"使用相对行号
- set relativenumber
-"光标离窗口上下边界5行时窗口自动滚动
- set scrolloff=5
- set mouse=
