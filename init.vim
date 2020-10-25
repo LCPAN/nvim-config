@@ -41,6 +41,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 
  Plug 'skywind3000/asyncrun.vim'
  Plug 'vimwiki/vimwiki'
+ Plug 'mbbill/undotree'
 
 " Initialize plugin system
  call plug#end()
@@ -249,8 +250,14 @@ let g:echodoc#type = 'signature'
 "auto-pairs
  let g:AutoPairsFlyMode = 0
 
- nnoremap <F5> :Vista lcn<CR>
- nnoremap <F6> :Vista finder fzf<CR>
+" undotree
+ " set the undotree window layout
+ let g:undotree_WindowLayout = 2
+ " the undotree window will get focus after being opened
+ let g:undotree_SetFocusWhenToggle = 1
+ nnoremap <F5> :UndotreeToggle<CR>
+
+ nnoremap <F6> :Vista lcn<CR>
 
  nnoremap <F9> :so ~/.config/nvim/init.vim<CR>
 
