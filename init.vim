@@ -162,7 +162,7 @@ let g:echodoc#type = 'virtual'
   " \ 'python': ['pyls'],
 
 " Run gofmt on save
- autocmd BufWritePre *.go :call LanguageClient#textDocument_formatting_sync()
+" autocmd BufWritePre *.go :call LanguageClient#textDocument_formatting_sync()
 
  " Put this outside of the plugin section
  " <leader>lf to fuzzy find the symbols in the current document
@@ -214,7 +214,7 @@ let g:echodoc#type = 'virtual'
  map <F3> :NERDTreeToggle<CR>
 
 "ultisnips
- let g:UltiSnipsExpandTrigger="<tab>"
+ let g:UltiSnipsExpandTrigger="<TAB>"
  let g:UltiSnipsListSnippets = '<C-Tab>'           " 弹出UltiSnips的可用列表,<C-Tab>映射
  let g:UltiSnipsJumpForwardTrigger = '<Tab>'       " <Tab>跳转的到下一个代码块可编辑区
  let g:UltiSnipsJumpBackwardTrigger = '<S-Tab>'    " <S-Tab>跳转到上一个代码块可编辑区
@@ -310,6 +310,17 @@ let g:echodoc#type = 'virtual'
  "nnoremap <silent> <C-k> :TmuxNavigateUp<CR>
  "nnoremap <silent> <C-l> :TmuxNavigateRight<CR>
  "nnoremap <silent> <C-;> :TmuxNavigatePrevious<CR>
+ 
+" vim-go
+ let g:go_highlight_fields = 1
+ let g:go_highlight_functions = 1
+ let g:go_highlight_function_calls = 1
+ let g:go_highlight_extra_types = 1
+ let g:go_highlight_operators = 1
+ " Auto formatting and importing
+ let g:go_fmt_autosave = 1
+ let g:go_fmt_command = "goimports"
+ let g:go_auto_type_info = 1
 
  nnoremap <F11> :Vista lcn<CR>
 
