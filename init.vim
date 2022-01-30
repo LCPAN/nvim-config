@@ -118,6 +118,8 @@ filetype plugin on
  "\ 'marker':  ['fg', 'Keyword'],
  "\ 'spinner': ['fg', 'Label'],
  "\ 'header':  ['fg', 'Comment'] }
+ " - Popup window (center of the current window)
+ let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6, 'relative': v:true } }
  " word under cursor
  nnoremap <leader>R :exec "Rg ".expand("<cword>")<CR>
  nnoremap <leader>, :Files<CR>
