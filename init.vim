@@ -8,6 +8,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 " Make sure you use single quotes
  Plug 'tpope/vim-fugitive'  "git
+ Plug 'tpope/vim-repeat'
  Plug 'preservim/nerdtree', { 'on':  'NERDTreeToggle' } |
             \ Plug 'Xuyuanp/nerdtree-git-plugin' |
             \ Plug 'tiagofumo/vim-nerdtree-syntax-highlight' |
@@ -52,6 +53,11 @@ call plug#begin('~/.local/share/nvim/plugged')
  "Plug 'christoomey/vim-tmux-navigator'
  Plug 'puremourning/vimspector'
  Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
+ Plug 'Olical/conjure'  "scheme
+ Plug 'ggandor/leap.nvim'
+ Plug 'ggandor/flit.nvim'
+ Plug 'projekt0n/github-nvim-theme'
 
 " Initialize plugin system
  call plug#end()
@@ -323,6 +329,16 @@ let g:echodoc#type = 'virtual'
  let g:go_fmt_autosave = 1
  let g:go_fmt_command = "goimports"
  let g:go_auto_type_info = 1
+
+" conjure
+ let g:conjure#client#scheme#stdio#command = "petite"
+ let g:conjure#client#scheme#stdio#prompt_pattern = "> $?"
+
+" leap
+ lua require('leap').add_default_mappings()
+
+" colorscheme github_dark
+ colorscheme github_light_colorblind
 
  nnoremap <F11> :Vista lcn<CR>
 
