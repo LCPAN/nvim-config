@@ -2,4 +2,4 @@
 nvim configure file
 
 configure path
-~/.config/nvim/init.vim
+~/.config/nvim/init.lua
