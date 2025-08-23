@@ -1,6 +1,7 @@
 local opt = vim.opt
 
 vim.g.python3_host_prog = '/usr/bin/python3'
+vim.opt.termguicolors = true
 
 -- 行号
 -- "开启行号显示
@@ -61,5 +62,3 @@ opt.foldenable = false
 
 -- opt.undofile = true
 -- opt.undodir = vim.fn.expand('$HOME/.local/share/nvim/undo')
-
-vim.cmd[[colorscheme tokyonight-moon]]

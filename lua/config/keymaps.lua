@@ -3,7 +3,7 @@ vim.g.mapleader = ";"
 local keymap = vim.keymap
 
 -- nvim-tree
-keymap.set("n", "<F3>", ":NvimTreeToggle<CR>")
+--keymap.set("n", "<F3>", ":NvimTreeToggle<CR>")
 
 -- 定义快捷键保存当前窗口内容
 keymap.set("n", "<Leader>wt", ":w<CR>")
