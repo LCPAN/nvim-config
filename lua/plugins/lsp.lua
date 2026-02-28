@@ -36,7 +36,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
-vim.lsp.set_log_level("debug")
+vim.lsp.set_log_level("warn")
 
 local M = {
   {
