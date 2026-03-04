@@ -1,5 +1,7 @@
 local opt = vim.opt
 
+vim.cmd("syntax enable")
+
 vim.g.python3_host_prog = '/usr/bin/python3'
 vim.opt.termguicolors = true
 
@@ -58,7 +60,7 @@ opt.foldmethod = "syntax"
 -- 启动 vim 时关闭折叠代码
 opt.foldenable = false
 
--- opt.autoread = true
+opt.autoread = true
 
 -- opt.undofile = true
 -- opt.undodir = vim.fn.expand('$HOME/.local/share/nvim/undo')

@@ -6,20 +6,23 @@ local M = {
     'https://gitlab.com/HiPhish/rainbow-delimiters.nvim'
   },
   build = ":TSUpdate",
-  config = function()
-    -- 1. 配置安装目录（可选）
-    require("nvim-treesitter").setup {
-      highlight = { enable = true },
-      indent = { enable = true },
-      install_dir = vim.fn.stdpath("data") .. "/site",
-    }
+  --config = function()
+  --  -- 1. 配置安装目录（可选）
+  --  require("nvim-treesitter").setup {
+  --    highlight = { enable = true },
+  --    indent = { enable = true },
+  --    install_dir = vim.fn.stdpath("data") .. "/site",
+  --  }
 
-    -- 3. 手动安装 parser（可选，异步）
-    require("nvim-treesitter").install { "vim", "bash", "c", "cpp", "json", "lua", "python", "rust", "markdown", "markdown_inline", "go" }
-  end,
-  --opts = {
-  --  -- 添加不同语言
-  --  ensure_installed = { "vim", "bash", "c", "cpp", "json", "lua", "python", "rust", "markdown", "markdown_inline", "go" }, -- one of "all" or a list of languages
+  --  -- 3. 手动安装 parser（可选，异步）
+  --  require("nvim-treesitter").install { "vim", "bash", "c", "cpp", "json", "lua", "python", "rust", "markdown", "markdown_inline", "go" }
+  --end,
+  opts = {
+    highlight = { enable = true },
+    indent = { enable = true },
+
+    -- 添加不同语言
+    ensure_installed = { "vim", "bash", "c", "cpp", "json", "lua", "python", "rust", "markdown", "markdown_inline", "go" }, -- one of "all" or a list of languages
 
   --  highlight = {
   --    enable = true,
@@ -40,7 +43,7 @@ local M = {
   --    enable = true,
   --    extended_mode = true,
   --    max_file_lines = nil,
-  --  }
+    }
 }
 
 return M

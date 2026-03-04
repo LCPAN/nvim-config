@@ -36,7 +36,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
-vim.lsp.set_log_level("debug")
+vim.lsp.set_log_level("warn")
 
 local M = {
   {
@@ -74,12 +74,12 @@ local M = {
 
     config = function(_, opts)
       local capabilities = require('cmp_nvim_lsp').default_capabilities()
-      
-      require("lspconfig").lua_ls.setup {
+
+      vim.lsp.config("lua_ls", {
         capabilities = capabilities,
-      }
-      
-      require("lspconfig").gopls.setup {
+      })
+
+      vim.lsp.config("gopls", {
         capabilities = capabilities,
         settings = {
           gopls = {
@@ -151,9 +151,9 @@ local M = {
         init_options = {
           usePlaceholders = true,
         },
-      }
+      })
       
-      require("lspconfig").rust_analyzer.setup {
+      vim.lsp.config("rust_analyzer", {
         capabilities = capabilities,
         settings = {
           ['rust-analyzer'] = {
@@ -176,15 +176,17 @@ local M = {
             },
           },
         },
-      }
-      
-      require("lspconfig").clangd.setup {
+      })
+
+      vim.lsp.config("clangd", {
         capabilities = capabilities,
-      }
-      
-      require("lspconfig").scheme_langserver.setup {
+      })
+
+      vim.lsp.config("scheme_langserver", {
         capabilities = capabilities,
-      }
+      })
+
+      vim.lsp.enable("lua_ls", "gopls", "rust_analyzer", "clangd", "scheme_langserver")
     end
   },
 
@@ -202,7 +204,7 @@ local M = {
     },
   },
 
-  { 'h-hg/fcitx.nvim' },
+  --{ 'h-hg/fcitx.nvim' },
 }
 
 return M
